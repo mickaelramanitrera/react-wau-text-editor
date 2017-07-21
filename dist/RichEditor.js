@@ -84,11 +84,34 @@ var RichEditor = function (_React$Component) {
             this.setState({ editorState: editorState, h_styleValue: BlockType });
             if (typeof this.props.onChange === 'function') {
                 if (editorState.getCurrentContent().hasText()) {
-                    this.props.onChange((0, _draftJsExportHtml.stateToHTML)(editorState.getCurrentContent()));
+                    //replace the remaining links to anchors
+                    var textInHtml = (0, _draftJsExportHtml.stateToHTML)(editorState.getCurrentContent());
+                    this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
                 } else {
                     this.props.onChange("");
                 }
             }
+        }
+    }, {
+        key: '_replaceTxtNotInA',
+        value: function _replaceTxtNotInA(html, regex, replace) {
+
+            //just to make the txt parse easily, without (start) or (ends) issue
+            html = '>' + html + '<';
+
+            //parse txt between > and < but not follow with</a
+            html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
+                //now replace the txt
+                return '>' + txt.replace(regex, replace) + '<';
+            });
+            //remove the head > and tail <
+            return html.substring(1, html.length - 1);
+        }
+    }, {
+        key: '_convertUrlsToHtmlLinks',
+        value: function _convertUrlsToHtmlLinks(text) {
+            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\']+)/g;
+            return this._replaceTxtNotInA(text, regx, "<a href='$1'>$1</a>");
         }
     }, {
         key: '_handleKeyCommand',

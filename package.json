@@ -1,6 +1,6 @@
 {
   "name": "wau-react-text-editor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "React Text editor for WAU projects written on top of DraftJS",
   "main": "index.js",
   "scripts": {
