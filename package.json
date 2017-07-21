@@ -1,0 +1,21 @@
+{
+  "name": "wau-react-text-editor",
+  "version": "1.0.0",
+  "description": "React Text editor for WAU projects written on top of DraftJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mickaël RAMANITRERA",
+  "license": "ISC",
+  "dependencies": {
+    "draft-js": "^0.10.1",
+    "draft-js-export-html": "^0.5.4",
+    "linkify-it": "^2.0.3",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-select": "1.0.0-rc.1",
+    "tlds": "^1.192.0"
+  }
+}
