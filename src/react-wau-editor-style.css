@@ -3,7 +3,7 @@
     border: 1px solid #ddd;
     font-family: 'Georgia', serif;
     font-size: 14px;
-    width: 80%;
+    width: 100%;
     padding: 6px 0 0px 0;
     margin: auto;
     -webkit-border-radius:2px;
@@ -73,8 +73,8 @@
     margin-right: 8px;
 }
 
-.RichEditor-activeButton {
-    color: #5890ff;
+.RichEditor-activeButton > i {
+    color: #5890ff!important;
 }
 
 .drafts-dialog-overlay {
