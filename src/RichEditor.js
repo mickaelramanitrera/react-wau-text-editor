@@ -13,6 +13,7 @@ import {
 } from 'draft-js';
 import Select from 'react-select';
 import {stateToHTML} from 'draft-js-export-html';
+import {stateFromHTML} from 'draft-js-import-html';
 import linkifyIt from 'linkify-it';
 import tlds from 'tlds';
 
@@ -20,73 +21,13 @@ export default class RichEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        /*Decorators functions*/
-        /**********************/
-        const findLinkEntities = (contentBlock, callback, contentState) => {
-            contentBlock.findEntityRanges(
-                (character) => {
-                    const entityKey = character.getEntity();
-                    return (
-                        entityKey !== null &&
-                        contentState.getEntity(entityKey).getType() === 'LINK'
-                    );
-                },
-                callback
-            );
-        };
-        const Link             = (props) => {
-            const {url} = props.contentState.getEntity(props.entityKey).getData();
-            return (
-                <a href={url} style={styles.link} target="_blank">
-                    {props.children}
-                </a>
-            );
-        };
-        const FindNormalLinks  = (contentBlock, callback, contentState) => {
-            const linkify = linkifyIt();
-            linkify.tlds(tlds);
-
-            const links = linkify.match(contentBlock.get('text'));
-            if (typeof links !== 'undefined' && links !== null) {
-                links.map((link) => {
-                    callback(link.index, link.lastIndex);
-                });
-            }
-        };
-        const NormalLink       = (props) => {
-            return (
-                <a href={props.children} style={styles.link} target="_blank">
-                    {props.children}
-                </a>
-            );
-        };
-
-
-        /*Decorator*/
-        /**********************/
-        const decorator = new CompositeDecorator([
-            {
-                strategy : findLinkEntities,
-                component: Link,
-            },
-            {
-                strategy : FindNormalLinks,
-                component: NormalLink
-            }
-        ]);
-
-
         //affect the desired content from props
         var content = null;
         if (this.props.content === null || this.props.content !== "") {
-            const blocksFromHtml = convertFromHTML(this.props.content);
-            content              = ContentState.createFromBlockArray(
-                blocksFromHtml.contentBlocks,
-                blocksFromHtml.entityMap
-            );
-            content              = EditorState.createWithContent(content, decorator);
+            const importfromhtml = stateFromHTML(this.props.content);
+            content              = EditorState.createWithContent(importfromhtml, new CompositeDecorator(decorator));
         } else {
-            content = EditorState.createEmpty(decorator);
+            content = EditorState.createEmpty(new CompositeDecorator(decorator));
         }
 
         this.state             = {editorState: content, urlInputValue: "", showInput: false, h_styleValue: 'unstyled'};
@@ -108,7 +49,11 @@ export default class RichEditor extends React.Component {
             .getType();
         this.setState({editorState: editorState, h_styleValue: BlockType});
         if (typeof this.props.onChange === 'function') {
-            this.props.onChange(stateToHTML(editorState.getCurrentContent()));
+            if (editorState.getCurrentContent().hasText()) {
+                this.props.onChange(stateToHTML(editorState.getCurrentContent()));
+            } else {
+                this.props.onChange("");
+            }
         }
     }
 
@@ -196,7 +141,6 @@ export default class RichEditor extends React.Component {
 
         //do not create link if caret selection is collapsed
         if (selection.isCollapsed() && contentStateWithEntity === null) {
-            console.log("no selection");
             this.focusEditor();
             return false;
         }
@@ -214,7 +158,6 @@ export default class RichEditor extends React.Component {
             showInput    : false
         });
         this.focusEditor();
-        console.log('created link');
     }
 
     _getEntityAtCaret(key = false) {
@@ -289,7 +232,6 @@ export default class RichEditor extends React.Component {
     }
 
     h_styleChanged(val) {
-        console.log(val);
         this.setState({
             editorState : RichUtils.toggleBlockType(
                 this.state.editorState,
@@ -358,6 +300,7 @@ export default class RichEditor extends React.Component {
                         onTab={this.onTab}
                         ref="editor"
                         spellCheck={true}
+                        decorators={decorator}
                     />
                 </div>
             </div>
@@ -551,3 +494,58 @@ const InlineStyleControls = (props) => {
         </div>
     );
 };
+
+/*Decorators functions*/
+/**********************/
+const findLinkEntities = (contentBlock, callback, contentState) => {
+    contentBlock.findEntityRanges(
+        (character) => {
+            const entityKey = character.getEntity();
+            return (
+                entityKey !== null &&
+                contentState.getEntity(entityKey).getType() === 'LINK'
+            );
+        },
+        callback
+    );
+};
+const Link             = (props) => {
+    const {url} = props.contentState.getEntity(props.entityKey).getData();
+    return (
+        <a href={url} style={styles.link} target="_blank">
+            {props.children}
+        </a>
+    );
+};
+const FindNormalLinks  = (contentBlock, callback, contentState) => {
+    const linkify = linkifyIt();
+    linkify.tlds(tlds);
+
+    const links = linkify.match(contentBlock.get('text'));
+    if (typeof links !== 'undefined' && links !== null) {
+        links.map((link) => {
+            callback(link.index, link.lastIndex);
+        });
+    }
+};
+const NormalLink       = (props) => {
+    return (
+        <a href={props.children} style={styles.link} target="_blank">
+            {props.children}
+        </a>
+    );
+};
+
+
+/*Decorator*/
+/**********************/
+const decorator = [
+    {
+        strategy : findLinkEntities,
+        component: Link,
+    },
+    {
+        strategy : FindNormalLinks,
+        component: NormalLink
+    }
+];

@@ -18,6 +18,8 @@ var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
 var _draftJsExportHtml = require('draft-js-export-html');
 
+var _draftJsImportHtml = require('draft-js-import-html');
+
 var _linkifyIt = require('linkify-it');
 
 var _linkifyIt2 = _interopRequireDefault(_linkifyIt);
@@ -40,63 +42,15 @@ var RichEditor = function (_React$Component) {
     function RichEditor(props) {
         _classCallCheck(this, RichEditor);
 
-        /*Decorators functions*/
-        /**********************/
+        //affect the desired content from props
         var _this = _possibleConstructorReturn(this, (RichEditor.__proto__ || Object.getPrototypeOf(RichEditor)).call(this, props));
 
-        var findLinkEntities = function findLinkEntities(contentBlock, callback, contentState) {
-            contentBlock.findEntityRanges(function (character) {
-                var entityKey = character.getEntity();
-                return entityKey !== null && contentState.getEntity(entityKey).getType() === 'LINK';
-            }, callback);
-        };
-        var Link = function Link(props) {
-            var _props$contentState$g = props.contentState.getEntity(props.entityKey).getData(),
-                url = _props$contentState$g.url;
-
-            return _react2.default.createElement(
-                'a',
-                { href: url, style: styles.link, target: '_blank' },
-                props.children
-            );
-        };
-        var FindNormalLinks = function FindNormalLinks(contentBlock, callback, contentState) {
-            var linkify = (0, _linkifyIt2.default)();
-            linkify.tlds(_tlds2.default);
-
-            var links = linkify.match(contentBlock.get('text'));
-            if (typeof links !== 'undefined' && links !== null) {
-                links.map(function (link) {
-                    callback(link.index, link.lastIndex);
-                });
-            }
-        };
-        var NormalLink = function NormalLink(props) {
-            return _react2.default.createElement(
-                'a',
-                { href: props.children, style: styles.link, target: '_blank' },
-                props.children
-            );
-        };
-
-        /*Decorator*/
-        /**********************/
-        var decorator = new _draftJs.CompositeDecorator([{
-            strategy: findLinkEntities,
-            component: Link
-        }, {
-            strategy: FindNormalLinks,
-            component: NormalLink
-        }]);
-
-        //affect the desired content from props
         var content = null;
         if (_this.props.content === null || _this.props.content !== "") {
-            var blocksFromHtml = (0, _draftJs.convertFromHTML)(_this.props.content);
-            content = _draftJs.ContentState.createFromBlockArray(blocksFromHtml.contentBlocks, blocksFromHtml.entityMap);
-            content = _draftJs.EditorState.createWithContent(content, decorator);
+            var importfromhtml = (0, _draftJsImportHtml.stateFromHTML)(_this.props.content);
+            content = _draftJs.EditorState.createWithContent(importfromhtml, new _draftJs.CompositeDecorator(decorator));
         } else {
-            content = _draftJs.EditorState.createEmpty(decorator);
+            content = _draftJs.EditorState.createEmpty(new _draftJs.CompositeDecorator(decorator));
         }
 
         _this.state = { editorState: content, urlInputValue: "", showInput: false, h_styleValue: 'unstyled' };
@@ -129,7 +83,11 @@ var RichEditor = function (_React$Component) {
             var BlockType = editorState.getCurrentContent().getBlockForKey(Selection.getAnchorKey()).getType();
             this.setState({ editorState: editorState, h_styleValue: BlockType });
             if (typeof this.props.onChange === 'function') {
-                this.props.onChange((0, _draftJsExportHtml.stateToHTML)(editorState.getCurrentContent()));
+                if (editorState.getCurrentContent().hasText()) {
+                    this.props.onChange((0, _draftJsExportHtml.stateToHTML)(editorState.getCurrentContent()));
+                } else {
+                    this.props.onChange("");
+                }
             }
         }
     }, {
@@ -215,7 +173,6 @@ var RichEditor = function (_React$Component) {
 
             //do not create link if caret selection is collapsed
             if (selection.isCollapsed() && contentStateWithEntity === null) {
-                console.log("no selection");
                 this.focusEditor();
                 return false;
             }
@@ -229,7 +186,6 @@ var RichEditor = function (_React$Component) {
                 showInput: false
             });
             this.focusEditor();
-            console.log('created link');
         }
     }, {
         key: '_getEntityAtCaret',
@@ -305,7 +261,6 @@ var RichEditor = function (_React$Component) {
     }, {
         key: 'h_styleChanged',
         value: function h_styleChanged(val) {
-            console.log(val);
             this.setState({
                 editorState: _draftJs.RichUtils.toggleBlockType(this.state.editorState, val.value),
                 h_styleValue: val.value
@@ -397,7 +352,8 @@ var RichEditor = function (_React$Component) {
                         onChange: this.onChange,
                         onTab: this.onTab,
                         ref: 'editor',
-                        spellCheck: true
+                        spellCheck: true,
+                        decorators: decorator
                     })
                 )
             );
@@ -635,4 +591,51 @@ var InlineStyleControls = function InlineStyleControls(props) {
         })
     );
 };
+
+/*Decorators functions*/
+/**********************/
+var findLinkEntities = function findLinkEntities(contentBlock, callback, contentState) {
+    contentBlock.findEntityRanges(function (character) {
+        var entityKey = character.getEntity();
+        return entityKey !== null && contentState.getEntity(entityKey).getType() === 'LINK';
+    }, callback);
+};
+var Link = function Link(props) {
+    var _props$contentState$g = props.contentState.getEntity(props.entityKey).getData(),
+        url = _props$contentState$g.url;
+
+    return _react2.default.createElement(
+        'a',
+        { href: url, style: styles.link, target: '_blank' },
+        props.children
+    );
+};
+var FindNormalLinks = function FindNormalLinks(contentBlock, callback, contentState) {
+    var linkify = (0, _linkifyIt2.default)();
+    linkify.tlds(_tlds2.default);
+
+    var links = linkify.match(contentBlock.get('text'));
+    if (typeof links !== 'undefined' && links !== null) {
+        links.map(function (link) {
+            callback(link.index, link.lastIndex);
+        });
+    }
+};
+var NormalLink = function NormalLink(props) {
+    return _react2.default.createElement(
+        'a',
+        { href: props.children, style: styles.link, target: '_blank' },
+        props.children
+    );
+};
+
+/*Decorator*/
+/**********************/
+var decorator = [{
+    strategy: findLinkEntities,
+    component: Link
+}, {
+    strategy: FindNormalLinks,
+    component: NormalLink
+}];
 

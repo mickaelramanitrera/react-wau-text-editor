@@ -78,7 +78,7 @@
 }
 
 .drafts-dialog-overlay {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     background: #000;
     width: 100%;
