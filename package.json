@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "draft-js": "^0.10.1",
-    "draft-js-export-html": "^0.5.4",
     "draft-js-import-html": "^0.3.2",
     "linkify-it": "^2.0.3",
     "prop-types": "^15.5.10",

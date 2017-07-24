@@ -12,21 +12,23 @@ var _react2 = _interopRequireDefault(_react);
 
 var _draftJs = require('draft-js');
 
-var _reactSelect = require('react-select');
+var _draftjsToHtml = require('./Converter/draftjs-to-html');
 
-var _reactSelect2 = _interopRequireDefault(_reactSelect);
-
-var _draftJsExportHtml = require('draft-js-export-html');
+var _draftjsToHtml2 = _interopRequireDefault(_draftjsToHtml);
 
 var _draftJsImportHtml = require('draft-js-import-html');
 
-var _linkifyIt = require('linkify-it');
+var _Decorators = require('./Decorators');
 
-var _linkifyIt2 = _interopRequireDefault(_linkifyIt);
+var _Decorators2 = _interopRequireDefault(_Decorators);
 
-var _tlds = require('tlds');
+var _Link = require('./DialogBoxes/Link');
 
-var _tlds2 = _interopRequireDefault(_tlds);
+var _Link2 = _interopRequireDefault(_Link);
+
+var _StandardControls = require('./Controls/StandardControls');
+
+var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -48,9 +50,9 @@ var RichEditor = function (_React$Component) {
         var content = null;
         if (_this.props.content === null || _this.props.content !== "") {
             var importfromhtml = (0, _draftJsImportHtml.stateFromHTML)(_this.props.content);
-            content = _draftJs.EditorState.createWithContent(importfromhtml, new _draftJs.CompositeDecorator(decorator));
+            content = _draftJs.EditorState.createWithContent(importfromhtml, new _draftJs.CompositeDecorator(_Decorators2.default));
         } else {
-            content = _draftJs.EditorState.createEmpty(new _draftJs.CompositeDecorator(decorator));
+            content = _draftJs.EditorState.createEmpty(new _draftJs.CompositeDecorator(_Decorators2.default));
         }
 
         _this.state = { editorState: content, urlInputValue: "", showInput: false, h_styleValue: 'unstyled' };
@@ -85,7 +87,7 @@ var RichEditor = function (_React$Component) {
             if (typeof this.props.onChange === 'function') {
                 if (editorState.getCurrentContent().hasText()) {
                     //replace the remaining links to anchors
-                    var textInHtml = (0, _draftJsExportHtml.stateToHTML)(editorState.getCurrentContent());
+                    var textInHtml = (0, _draftjsToHtml2.default)((0, _draftJs.convertToRaw)(editorState.getCurrentContent()));
                     this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
                 } else {
                     this.props.onChange("");
@@ -93,25 +95,10 @@ var RichEditor = function (_React$Component) {
             }
         }
     }, {
-        key: '_replaceTxtNotInA',
-        value: function _replaceTxtNotInA(html, regex, replace) {
-
-            //just to make the txt parse easily, without (start) or (ends) issue
-            html = '>' + html + '<';
-
-            //parse txt between > and < but not follow with</a
-            html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
-                //now replace the txt
-                return '>' + txt.replace(regex, replace) + '<';
-            });
-            //remove the head > and tail <
-            return html.substring(1, html.length - 1);
-        }
-    }, {
         key: '_convertUrlsToHtmlLinks',
         value: function _convertUrlsToHtmlLinks(text) {
             var regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\']+)/g;
-            return this._replaceTxtNotInA(text, regx, "<a href='$1'>$1</a>");
+            return (0, _utils._replaceTxtNotInA)(text, regx, "<a href='$1' target='_blank'>$1</a>");
         }
     }, {
         key: '_handleKeyCommand',
@@ -157,7 +144,7 @@ var RichEditor = function (_React$Component) {
             var selection = this.state.editorState.getSelection();
             var linkValue = "";
             //check if there is an entity link now
-            var entityAtCaret = this._getEntityAtCaret();
+            var entityAtCaret = (0, _utils._getEntityAtCaret)(this.state.editorState);
             if (entityAtCaret !== null && entityAtCaret.type === "LINK") {
                 linkValue = entityAtCaret.getData().url;
             }
@@ -182,11 +169,11 @@ var RichEditor = function (_React$Component) {
             var selection = this.state.editorState.getSelection();
 
             //check if it is already a link there
-            var entityAtCaret = this._getEntityAtCaret();
+            var entityAtCaret = (0, _utils._getEntityAtCaret)(this.state.editorState);
             var contentStateWithEntity = null;
             if (entityAtCaret !== null && entityAtCaret.getType() === "LINK") {
                 //update the old link
-                var entityKeyAtCaret = this._getEntityAtCaret(true);
+                var entityKeyAtCaret = (0, _utils._getEntityAtCaret)(this.state.editorState, true);
                 contentStateWithEntity = contentState.replaceEntityData(entityKeyAtCaret, { url: urlValue });
 
                 this.setState({ urlInputValue: "", showInput: false });
@@ -200,7 +187,7 @@ var RichEditor = function (_React$Component) {
                 return false;
             }
             //create an entity
-            contentStateWithEntity = contentState.createEntity('LINK', 'SEGMENTED', { url: urlValue });
+            contentStateWithEntity = contentState.createEntity('LINK', 'SEGMENTED', { url: urlValue, target: '_blank' });
             var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
             //affect the link entity to the selection
             this.setState({
@@ -211,60 +198,15 @@ var RichEditor = function (_React$Component) {
             this.focusEditor();
         }
     }, {
-        key: '_getEntityAtCaret',
-        value: function _getEntityAtCaret() {
-            var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-            var selection = this.state.editorState.getSelection();
-            var anchorkey = selection.getAnchorKey();
-            var contentState = this.state.editorState.getCurrentContent();
-            var currentBlockOfContent = contentState.getBlockForKey(anchorkey);
-            var anchorCurrentPosition = selection.getAnchorOffset();
-            //check if the selection is a link
-            var entityIdAtSelection = currentBlockOfContent.getEntityAt(anchorCurrentPosition);
-            if (entityIdAtSelection !== null) {
-                if (key) {
-                    return entityIdAtSelection;
-                } else {
-                    return contentState.getEntity(entityIdAtSelection);
-                }
-            }
-
-            return null;
-        }
-    }, {
-        key: '_getEntityRange',
-        value: function _getEntityRange(entityToFind, contentBlock, contentState) {
-            var range = null;
-            contentBlock.findEntityRanges(function (character) {
-                var entityKey = character.getEntity();
-                if (entityKey === null) {
-                    return false;
-                }
-
-                var entity = contentState.getEntity(entityKey);
-                return entityToFind === entity;
-            }, function (start, end) {
-                range = new _draftJs.SelectionState({
-                    anchorKey: contentBlock.getKey(),
-                    anchorOffset: start,
-                    focusKey: contentBlock.getKey(),
-                    focusOffset: end
-                });
-            });
-
-            return range;
-        }
-    }, {
         key: 'removeLink',
         value: function removeLink() {
             var EditorState = this.state.editorState;
-            var entityAtCaret = this._getEntityAtCaret();
+            var entityAtCaret = (0, _utils._getEntityAtCaret)(this.state.editorState);
             var contentState = EditorState.getCurrentContent();
             var contentBlock = contentState.getBlockForKey(EditorState.getSelection().getAnchorKey());
             if (entityAtCaret !== null && entityAtCaret.type === "LINK") {
                 //get the selection of the entity
-                var entitySelection = this._getEntityRange(entityAtCaret, contentBlock, contentState);
+                var entitySelection = (0, _utils._getEntityRange)(entityAtCaret, contentBlock, contentState);
                 this.setState({
                     editorState: _draftJs.RichUtils.toggleLink(EditorState, entitySelection, null),
                     urlInputValue: "",
@@ -307,7 +249,7 @@ var RichEditor = function (_React$Component) {
                 }
             }
 
-            var input = this.state.showInput ? _react2.default.createElement(DraftDialogBox_789789, {
+            var input = this.state.showInput ? _react2.default.createElement(_Link2.default, {
                 value: this.state.urlInputValue,
                 onSubmit: function onSubmit(urlValue) {
                     return _this2.confirmLink(urlValue);
@@ -325,13 +267,13 @@ var RichEditor = function (_React$Component) {
                 _react2.default.createElement(
                     'div',
                     { className: 'RichEditor-toolbar' },
-                    _react2.default.createElement(BlockStyleControls, {
+                    _react2.default.createElement(_StandardControls.BlockStyleControls, {
                         editorState: editorState,
                         onToggle: this.toggleBlockType,
                         h_styleChanged: this.h_styleChanged.bind(this),
                         h_styleValue: this.state.h_styleValue
                     }),
-                    _react2.default.createElement(InlineStyleControls, {
+                    _react2.default.createElement(_StandardControls.InlineStyleControls, {
                         editorState: editorState,
                         onToggle: this.toggleInlineStyle
                     }),
@@ -368,15 +310,15 @@ var RichEditor = function (_React$Component) {
                     'div',
                     { className: className, onClick: this.focus },
                     _react2.default.createElement(_draftJs.Editor, {
-                        blockStyleFn: getBlockStyle,
-                        customStyleMap: styleMap,
+                        blockStyleFn: _utils.getBlockStyle,
+                        customStyleMap: _StandardControls.styleMap,
                         editorState: editorState,
                         handleKeyCommand: this.handleKeyCommand,
                         onChange: this.onChange,
                         onTab: this.onTab,
                         ref: 'editor',
                         spellCheck: true,
-                        decorators: decorator
+                        decorators: _Decorators2.default
                     })
                 )
             );
@@ -387,278 +329,3 @@ var RichEditor = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = RichEditor;
-
-var DraftDialogBox_789789 = function (_React$Component2) {
-    _inherits(DraftDialogBox_789789, _React$Component2);
-
-    function DraftDialogBox_789789(props) {
-        _classCallCheck(this, DraftDialogBox_789789);
-
-        var _this3 = _possibleConstructorReturn(this, (DraftDialogBox_789789.__proto__ || Object.getPrototypeOf(DraftDialogBox_789789)).call(this, props));
-
-        _this3.state = {
-            urlValue: props.value
-        };
-        return _this3;
-    }
-
-    _createClass(DraftDialogBox_789789, [{
-        key: 'onChange',
-        value: function onChange(event) {
-            this.setState({ urlValue: event.target.value });
-        }
-    }, {
-        key: 'submitChanges',
-        value: function submitChanges() {
-            this.props.onSubmit(this.state.urlValue);
-        }
-    }, {
-        key: '_onLinkInputKeyDown',
-        value: function _onLinkInputKeyDown(e) {
-            if (e.which === 13) {
-                this.submitChanges();
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    'div',
-                    { className: 'drafts-dialog-box' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'drafts-dialog-box-content' },
-                        _react2.default.createElement(
-                            'h5',
-                            null,
-                            _react2.default.createElement(
-                                'i',
-                                { className: 'material-icons left' },
-                                'link'
-                            ),
-                            'Add/Edit link'
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            null,
-                            _react2.default.createElement('input', { type: 'text', value: this.state.urlValue, onChange: this.onChange.bind(this),
-                                autoFocus: true, onKeyDown: this._onLinkInputKeyDown.bind(this) })
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'drafts-dialog-box-footer' },
-                        _react2.default.createElement(
-                            'a',
-                            { className: 'btn-floating btn-small grey', onClick: this.props.onDismiss },
-                            _react2.default.createElement(
-                                'i',
-                                {
-                                    className: 'material-icons left' },
-                                'clear'
-                            )
-                        ),
-                        _react2.default.createElement(
-                            'a',
-                            { className: 'btn-floating btn-small grey', onClick: this.submitChanges.bind(this) },
-                            _react2.default.createElement(
-                                'i',
-                                {
-                                    className: 'material-icons left' },
-                                'check'
-                            )
-                        )
-                    )
-                ),
-                _react2.default.createElement('div', { className: 'drafts-dialog-overlay', onClick: this.props.onDismiss })
-            );
-        }
-    }]);
-
-    return DraftDialogBox_789789;
-}(_react2.default.Component);
-
-var styles = {
-    root: {
-        fontFamily: '\'Georgia\', serif',
-        padding: 20,
-        width: 600
-    },
-    buttons: {
-        marginBottom: 10
-    },
-    urlInputContainer: {
-        marginBottom: 10
-    },
-    urlInput: {
-        fontFamily: '\'Georgia\', serif',
-        marginRight: 10,
-        padding: 3
-    },
-    editor: {
-        border: '1px solid #ccc',
-        cursor: 'text',
-        minHeight: 80,
-        padding: 10
-    },
-    button: {
-        marginTop: 10,
-        textAlign: 'center'
-    },
-    link: {
-        color: '#3b5998',
-        textDecoration: 'underline'
-    }
-};
-
-// Custom overrides for "code" style.
-var styleMap = {
-    CODE: {
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-        fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
-        fontSize: 16,
-        padding: 2
-    }
-};
-var getBlockStyle = function getBlockStyle(block) {
-    switch (block.getType()) {
-        case 'blockquote':
-            return 'RichEditor-blockquote';
-        default:
-            return null;
-    }
-};
-
-var StyleButton = function (_React$Component3) {
-    _inherits(StyleButton, _React$Component3);
-
-    function StyleButton() {
-        _classCallCheck(this, StyleButton);
-
-        var _this4 = _possibleConstructorReturn(this, (StyleButton.__proto__ || Object.getPrototypeOf(StyleButton)).call(this));
-
-        _this4.onToggle = function (e) {
-            e.preventDefault();
-            _this4.props.onToggle(_this4.props.style);
-        };
-        return _this4;
-    }
-
-    _createClass(StyleButton, [{
-        key: 'render',
-        value: function render() {
-            var className = 'RichEditor-styleButton';
-            if (this.props.active) {
-                className += ' RichEditor-activeButton';
-            }
-            return _react2.default.createElement(
-                'a',
-                { className: className, onMouseDown: this.onToggle },
-                _react2.default.createElement(
-                    'i',
-                    { className: 'material-icons' },
-                    this.props.label
-                )
-            );
-        }
-    }]);
-
-    return StyleButton;
-}(_react2.default.Component);
-
-var BLOCK_TYPES = [{ label: 'format_quote', style: 'blockquote' }, { label: 'format_list_bulleted', style: 'unordered-list-item' }, { label: 'format_list_numbered', style: 'ordered-list-item' }, { label: 'code', style: 'code-block' }];
-var H_STYLES = [{ label: "Normal", value: 'unstyled' }, { label: 'H1', value: 'header-one' }, { label: 'H2', value: 'header-two' }, { label: 'H3', value: 'header-three' }, { label: 'H4', value: 'header-four' }, { label: 'H5', value: 'header-five' }, { label: 'H6', value: 'header-six' }];
-
-var BlockStyleControls = function BlockStyleControls(props) {
-    var editorState = props.editorState;
-
-    var selection = editorState.getSelection();
-    var blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
-    return _react2.default.createElement(
-        'div',
-        { className: 'RichEditor-controls' },
-        _react2.default.createElement(_reactSelect2.default, {
-            value: props.h_styleValue,
-            options: H_STYLES,
-            onChange: props.h_styleChanged,
-            clearable: false
-        }),
-        BLOCK_TYPES.map(function (type) {
-            return _react2.default.createElement(StyleButton, {
-                key: type.label,
-                active: type.style === blockType,
-                label: type.label,
-                onToggle: props.onToggle,
-                style: type.style
-            });
-        })
-    );
-};
-var INLINE_STYLES = [{ label: 'format_bold', style: 'BOLD' }, { label: 'format_italic', style: 'ITALIC' }, { label: 'format_underline', style: 'UNDERLINE' }, { label: 'text_format', style: 'CODE' }];
-var InlineStyleControls = function InlineStyleControls(props) {
-    var currentStyle = props.editorState.getCurrentInlineStyle();
-    return _react2.default.createElement(
-        'div',
-        { className: 'RichEditor-controls' },
-        INLINE_STYLES.map(function (type) {
-            return _react2.default.createElement(StyleButton, {
-                key: type.label,
-                active: currentStyle.has(type.style),
-                label: type.label,
-                onToggle: props.onToggle,
-                style: type.style
-            });
-        })
-    );
-};
-
-/*Decorators functions*/
-/**********************/
-var findLinkEntities = function findLinkEntities(contentBlock, callback, contentState) {
-    contentBlock.findEntityRanges(function (character) {
-        var entityKey = character.getEntity();
-        return entityKey !== null && contentState.getEntity(entityKey).getType() === 'LINK';
-    }, callback);
-};
-var Link = function Link(props) {
-    var _props$contentState$g = props.contentState.getEntity(props.entityKey).getData(),
-        url = _props$contentState$g.url;
-
-    return _react2.default.createElement(
-        'a',
-        { href: url, style: styles.link, target: '_blank' },
-        props.children
-    );
-};
-var FindNormalLinks = function FindNormalLinks(contentBlock, callback, contentState) {
-    var linkify = (0, _linkifyIt2.default)();
-    linkify.tlds(_tlds2.default);
-
-    var links = linkify.match(contentBlock.get('text'));
-    if (typeof links !== 'undefined' && links !== null) {
-        links.map(function (link) {
-            callback(link.index, link.lastIndex);
-        });
-    }
-};
-var NormalLink = function NormalLink(props) {
-    return _react2.default.createElement(
-        'a',
-        { href: props.children, style: styles.link, target: '_blank' },
-        props.children
-    );
-};
-
-/*Decorator*/
-/**********************/
-var decorator = [{
-    strategy: findLinkEntities,
-    component: Link
-}, {
-    strategy: FindNormalLinks,
-    component: NormalLink
-}];
-
