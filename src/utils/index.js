@@ -34,6 +34,14 @@ export const _getEntityAtCaret = (editorState, key = false) => {
     return null;
 };
 
+export const _getCharacterAtEndOfSelection = (selection, contentState) => {
+    const currentContentBlockKey = selection.getAnchorKey();
+    const currentContentBlock = contentState.getBlockForKey(currentContentBlockKey);
+    const allTextInCurrentBlock = currentContentBlock.getText();
+    //get the character at the end of selection
+    return allTextInCurrentBlock[selection.getFocusOffset()];
+};
+
 export const _getEntityRange = (entityToFind, contentBlock, contentState) => {
     var range = null;
     contentBlock.findEntityRanges(

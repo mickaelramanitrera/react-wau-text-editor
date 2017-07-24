@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getBlockStyle = exports._getEntityRange = exports._getEntityAtCaret = exports._replaceTxtNotInA = undefined;
+exports.getBlockStyle = exports._getEntityRange = exports._getCharacterAtEndOfSelection = exports._getEntityAtCaret = exports._replaceTxtNotInA = undefined;
 
 var _draftJs = require('draft-js');
 
@@ -40,6 +40,14 @@ var _getEntityAtCaret = exports._getEntityAtCaret = function _getEntityAtCaret(e
     }
 
     return null;
+};
+
+var _getCharacterAtEndOfSelection = exports._getCharacterAtEndOfSelection = function _getCharacterAtEndOfSelection(selection, contentState) {
+    var currentContentBlockKey = selection.getAnchorKey();
+    var currentContentBlock = contentState.getBlockForKey(currentContentBlockKey);
+    var allTextInCurrentBlock = currentContentBlock.getText();
+    //get the character at the end of selection
+    return allTextInCurrentBlock[selection.getFocusOffset()];
 };
 
 var _getEntityRange = exports._getEntityRange = function _getEntityRange(entityToFind, contentBlock, contentState) {

@@ -9,7 +9,8 @@ import {
     Entity,
     convertFromHTML,
     convertToRaw,
-    ContentState
+    ContentState,
+    Modifier
 } from 'draft-js';
 import stateToHTML from './Converter/draftjs-to-html';
 import {stateFromHTML} from 'draft-js-import-html';
@@ -24,7 +25,8 @@ import {
     _replaceTxtNotInA,
     _getEntityRange,
     _getEntityAtCaret,
-    getBlockStyle
+    getBlockStyle,
+    _getCharacterAtEndOfSelection
 } from './utils';
 
 
@@ -165,13 +167,49 @@ export default class RichEditor extends React.Component {
         //create an entity
         contentStateWithEntity = contentState.createEntity(
             'LINK',
-            'SEGMENTED',
+            'MUTABLE',
             {url: urlValue, target:'_blank'}
         );
         const entityKey        = contentStateWithEntity.getLastCreatedEntityKey();
         //affect the link entity to the selection
+        var withLink = Modifier.applyEntity(
+            this.state.editorState.getCurrentContent(),
+            selection,
+            entityKey,
+        );
+
+        var editorStateWithEntity = EditorState.push(
+            this.state.editorState,
+            withLink,
+            'apply-entity',
+        );
+
+
+        const characterAtEndOfSelection = _getCharacterAtEndOfSelection(selection, withLink);
+        // insert a blank space after link if character after selection is empty
+        if (characterAtEndOfSelection === undefined) {
+
+            const collapsedSelection = editorStateWithEntity.getSelection().merge({
+                anchorOffset: selection.get('focusOffset'),
+                focusOffset: selection.get('focusOffset'),
+            });
+            editorStateWithEntity = EditorState.acceptSelection(editorStateWithEntity, collapsedSelection);
+            withLink = Modifier.insertText(
+                editorStateWithEntity.getCurrentContent(),
+                collapsedSelection,
+                ' ',
+                editorStateWithEntity.getCurrentInlineStyle(),
+                undefined,
+            );
+            editorStateWithEntity = EditorState.push(
+                editorStateWithEntity,
+                withLink,
+                'insert-characters',
+            );
+        }
+
         this.setState({
-            editorState  : RichUtils.toggleLink(this.state.editorState, selection, entityKey),
+            editorState  : editorStateWithEntity,
             urlInputValue: "",
             showInput    : false
         });

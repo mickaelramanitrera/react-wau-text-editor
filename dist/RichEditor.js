@@ -187,11 +187,28 @@ var RichEditor = function (_React$Component) {
                 return false;
             }
             //create an entity
-            contentStateWithEntity = contentState.createEntity('LINK', 'SEGMENTED', { url: urlValue, target: '_blank' });
+            contentStateWithEntity = contentState.createEntity('LINK', 'MUTABLE', { url: urlValue, target: '_blank' });
             var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
             //affect the link entity to the selection
+            var withLink = _draftJs.Modifier.applyEntity(this.state.editorState.getCurrentContent(), selection, entityKey);
+
+            var editorStateWithEntity = _draftJs.EditorState.push(this.state.editorState, withLink, 'apply-entity');
+
+            var characterAtEndOfSelection = (0, _utils._getCharacterAtEndOfSelection)(selection, withLink);
+            // insert a blank space after link if character after selection is empty
+            if (characterAtEndOfSelection === undefined) {
+
+                var collapsedSelection = editorStateWithEntity.getSelection().merge({
+                    anchorOffset: selection.get('focusOffset'),
+                    focusOffset: selection.get('focusOffset')
+                });
+                editorStateWithEntity = _draftJs.EditorState.acceptSelection(editorStateWithEntity, collapsedSelection);
+                withLink = _draftJs.Modifier.insertText(editorStateWithEntity.getCurrentContent(), collapsedSelection, ' ', editorStateWithEntity.getCurrentInlineStyle(), undefined);
+                editorStateWithEntity = _draftJs.EditorState.push(editorStateWithEntity, withLink, 'insert-characters');
+            }
+
             this.setState({
-                editorState: _draftJs.RichUtils.toggleLink(this.state.editorState, selection, entityKey),
+                editorState: editorStateWithEntity,
                 urlInputValue: "",
                 showInput: false
             });
