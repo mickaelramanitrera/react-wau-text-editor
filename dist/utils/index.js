@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getBlockStyle = exports._getEntityRange = exports._getCharacterAtEndOfSelection = exports._getEntityAtCaret = exports._replaceTxtNotInA = undefined;
+exports.createNonEmptyParagraph = exports.getBlockStyle = exports._getEntityRange = exports._getCharacterAtEndOfSelection = exports._getEntityAtCaret = exports._replaceTxtNotInA = undefined;
 
 var _draftJs = require('draft-js');
 
@@ -79,4 +79,8 @@ var getBlockStyle = exports.getBlockStyle = function getBlockStyle(block) {
         default:
             return null;
     }
+};
+
+var createNonEmptyParagraph = exports.createNonEmptyParagraph = function createNonEmptyParagraph(content) {
+    return content.replace(/<p><\/p>/g, "<p>&nbsp;</p>");
 };

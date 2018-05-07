@@ -77,3 +77,7 @@ export const getBlockStyle = (block) => {
             return null;
     }
 };
+
+export const createNonEmptyParagraph = (content) => {
+  return content.replace(/<p><\/p>/g, "<p>&nbsp;</p>");
+};

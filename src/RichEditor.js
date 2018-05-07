@@ -22,6 +22,7 @@ import {
     styleMap
 } from './Controls/StandardControls';
 import {
+    createNonEmptyParagraph,
     _replaceTxtNotInA,
     _getEntityRange,
     _getEntityAtCaret,
@@ -37,7 +38,7 @@ export default class RichEditor extends React.Component {
         //affect the desired content from props
         var content = null;
         if (this.props.content === null || this.props.content !== "") {
-            const importfromhtml = stateFromHTML(this.props.content);
+            const importfromhtml = stateFromHTML(createNonEmptyParagraph(this.props.content));
             content              = EditorState.createWithContent(importfromhtml, new CompositeDecorator(decorator));
         } else {
             content = EditorState.createEmpty(new CompositeDecorator(decorator));
@@ -64,7 +65,7 @@ export default class RichEditor extends React.Component {
         if (typeof this.props.onChange === 'function') {
             if (editorState.getCurrentContent().hasText()) {
                 //replace the remaining links to anchors
-                const textInHtml = stateToHTML(convertToRaw(editorState.getCurrentContent()));
+                const textInHtml = createNonEmptyParagraph(stateToHTML(convertToRaw(editorState.getCurrentContent())));
                 this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
             } else {
                 this.props.onChange("");

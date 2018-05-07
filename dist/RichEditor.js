@@ -49,7 +49,7 @@ var RichEditor = function (_React$Component) {
 
         var content = null;
         if (_this.props.content === null || _this.props.content !== "") {
-            var importfromhtml = (0, _draftJsImportHtml.stateFromHTML)(_this.props.content);
+            var importfromhtml = (0, _draftJsImportHtml.stateFromHTML)((0, _utils.createNonEmptyParagraph)(_this.props.content));
             content = _draftJs.EditorState.createWithContent(importfromhtml, new _draftJs.CompositeDecorator(_Decorators2.default));
         } else {
             content = _draftJs.EditorState.createEmpty(new _draftJs.CompositeDecorator(_Decorators2.default));
@@ -87,7 +87,7 @@ var RichEditor = function (_React$Component) {
             if (typeof this.props.onChange === 'function') {
                 if (editorState.getCurrentContent().hasText()) {
                     //replace the remaining links to anchors
-                    var textInHtml = (0, _draftjsToHtml2.default)((0, _draftJs.convertToRaw)(editorState.getCurrentContent()));
+                    var textInHtml = (0, _utils.createNonEmptyParagraph)((0, _draftjsToHtml2.default)((0, _draftJs.convertToRaw)(editorState.getCurrentContent())));
                     this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
                 } else {
                     this.props.onChange("");
