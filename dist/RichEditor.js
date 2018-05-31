@@ -187,7 +187,7 @@ var RichEditor = function (_React$Component) {
                 return false;
             }
             //create an entity
-            contentStateWithEntity = contentState.createEntity('LINK', 'MUTABLE', { url: urlValue, target: '_blank' });
+            contentStateWithEntity = contentState.createEntity('LINK', 'MUTABLE', { url: urlValue.includes('http:') === true ? urlValue : 'http:\/\/' + urlValue, target: '_blank' });
             var entityKey = contentStateWithEntity.getLastCreatedEntityKey();
             //affect the link entity to the selection
             var withLink = _draftJs.Modifier.applyEntity(this.state.editorState.getCurrentContent(), selection, entityKey);

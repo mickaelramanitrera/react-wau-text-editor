@@ -169,7 +169,7 @@ export default class RichEditor extends React.Component {
         contentStateWithEntity = contentState.createEntity(
             'LINK',
             'MUTABLE',
-            {url: urlValue, target:'_blank'}
+            {url: (urlValue.includes('http:') === true) ? urlValue : 'http:\/\/' + urlValue, target:'_blank'}
         );
         const entityKey        = contentStateWithEntity.getLastCreatedEntityKey();
         //affect the link entity to the selection

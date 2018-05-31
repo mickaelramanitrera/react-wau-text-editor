@@ -62,14 +62,9 @@ const FindNormalLinks = (contentBlock, callback, contentState) => {
 };
 
 const Link = (props) => {
-    let url = props.contentState.getEntity(props.entityKey).getData();
-    let urlVal = url;
-    if(urlVal.includes('http:\/\/') === false){
-        urlVal = 'http:\/\/' + url;
-    }
+    const {url} = props.contentState.getEntity(props.entityKey).getData();
     return (
-
-        <a href={urlVal} style={styles.link} target="_blank">
+        <a href={url} style={styles.link} target="_blank">
             {props.children}
         </a>
     );

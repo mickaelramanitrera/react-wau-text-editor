@@ -72,14 +72,12 @@ var FindNormalLinks = function FindNormalLinks(contentBlock, callback, contentSt
 };
 
 var Link = function Link(props) {
-    var url = props.contentState.getEntity(props.entityKey).getData();
-    var urlVal = url;
-    if (urlVal.includes('http:\/\/') === false) {
-        urlVal = 'http:\/\/' + url;
-    }
+    var _props$contentState$g = props.contentState.getEntity(props.entityKey).getData(),
+        url = _props$contentState$g.url;
+
     return _react2.default.createElement(
         'a',
-        { href: urlVal, style: styles.link, target: '_blank' },
+        { href: url, style: styles.link, target: '_blank' },
         props.children
     );
 };
