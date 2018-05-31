@@ -98,7 +98,7 @@ var RichEditor = function (_React$Component) {
         key: '_convertUrlsToHtmlLinks',
         value: function _convertUrlsToHtmlLinks(text) {
             var regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n]+)/g;
-            return (0, _utils._replaceTxtNotInA)(text, regx, "<a href='$1' target='_blank'>$1</a>");
+            return (0, _utils._replaceTxtNotInA)(text, regx);
         }
     }, {
         key: '_handleKeyCommand',

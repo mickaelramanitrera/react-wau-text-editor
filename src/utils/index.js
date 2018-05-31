@@ -1,18 +1,29 @@
 import {SelectionState} from 'draft-js';
 
 
-export const _replaceTxtNotInA = (html, regex, replace) => {
+export const _replaceTxtNotInA = (html, regexp) => {
 
-    //just to make the txt parse easily, without (start) or (ends) issue
-    html = '>' + html + '<';
+  //just to make the txt parse easily, without (start) or (ends) issue
+  html = '>' + html + '<';
 
-    //parse txt between > and < but not follow with</a
-    html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
-        //now replace the txt
-        return '>' + txt.replace(regex, replace) + '<';
-    });
-    //remove the head > and tail <
-    return html.substring(1, html.length - 1);
+  //parse txt between > and < but not follow with</a
+  html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
+    //now replace the txt
+    var matches = txt.match(regexp);
+    if(matches.length > 0){
+      // Add http:// to link that does not have it or only add <a> balise
+      matches.forEach(function(match){
+        if (match.includes('http') !== true ){
+          txt = txt.replace(' ' + match, "<a href='"+ "http:\/\/" + match +"' target='_blank'> " +  match +"</a>");
+        } else {
+          txt = txt.replace( match, "<a href='" + match + "' target='_blank'>"+ match +"</a>");
+        }
+      });
+    }
+    return '>' + txt + '<';
+  });
+  //remove the head > and tail <
+  return html.substring(1, html.length - 1);
 };
 
 export const _getEntityAtCaret = (editorState, key = false) => {
