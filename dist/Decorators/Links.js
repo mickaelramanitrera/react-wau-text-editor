@@ -75,9 +75,13 @@ var Link = function Link(props) {
     var _props$contentState$g = props.contentState.getEntity(props.entityKey).getData(),
         url = _props$contentState$g.url;
 
+    var urlVal = url;
+    if (urlVal.includes('http:\/\/') === false) {
+        urlVal = 'http:\/\/' + url;
+    }
     return _react2.default.createElement(
         'a',
-        { href: url, style: styles.link, target: '_blank' },
+        { href: urlVal, style: styles.link, target: '_blank' },
         props.children
     );
 };
