@@ -72,9 +72,7 @@ var FindNormalLinks = function FindNormalLinks(contentBlock, callback, contentSt
 };
 
 var Link = function Link(props) {
-    var _props$contentState$g = props.contentState.getEntity(props.entityKey).getData(),
-        url = _props$contentState$g.url;
-
+    var url = props.contentState.getEntity(props.entityKey).getData();
     var urlVal = url;
     if (urlVal.includes('http:\/\/') === false) {
         urlVal = 'http:\/\/' + url;

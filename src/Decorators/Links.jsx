@@ -62,11 +62,11 @@ const FindNormalLinks = (contentBlock, callback, contentState) => {
 };
 
 const Link = (props) => {
-    const {url} = props.contentState.getEntity(props.entityKey).getData();
-  let urlVal = url;
-  if(urlVal.includes('http:\/\/') === false){
-    urlVal = 'http:\/\/' + url;
-  }
+    let url = props.contentState.getEntity(props.entityKey).getData();
+    let urlVal = url;
+    if(urlVal.includes('http:\/\/') === false){
+        urlVal = 'http:\/\/' + url;
+    }
     return (
 
         <a href={urlVal} style={styles.link} target="_blank">
