@@ -10,7 +10,7 @@ export const _replaceTxtNotInA = (html, regexp) => {
   html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
     //now replace the txt
     var matches = txt.match(regexp);
-    if(matches.length > 0){
+    if((matches !== null) && (matches.length > 0)){
       // Add http:// to link that does not have it or only add <a> balise
       matches.forEach(function(match){
         if (match.includes('http') !== true ){
