@@ -14,9 +14,9 @@ export const _replaceTxtNotInA = (html, regexp) => {
       // Add http:// to link that does not have it or only add <a> balise
       matches.forEach(function(match){
         if (match.includes('http') !== true ){
-          txt = txt.replace( new RegExp("\\b(?<!https?:\/\/|(\>)])"+ match.replace(/\./, "\\.") +"\\b"), "<a href='"+ "http:\/\/" + match +"' target='_blank'>" +  match +"</a>");
+          txt = txt.replace( new RegExp("\\b(?<![(https?:\/\/)|(\>)])"+ match.replace(/\./, "\\.") +"\\b"), "<a href='"+ "http:\/\/" + match +"' target='_blank'>" +  match +"</a>");
         } else {
-          txt = txt.replace( new RegExp("\\b(?<!https?:\/\/|(\>)])"+ match.replace(/\./, "\\.") +"\\b"), "<a href='" + match + "' target='_blank'>"+ match +"</a>");
+          txt = txt.replace( new RegExp("\\b(?<![(https?:\/\/)|(\>)])"+ match.replace(/\./, "\\.") +"\\b"), "<a href='" + match + "' target='_blank'>"+ match +"</a>");
         }
       });
     }
