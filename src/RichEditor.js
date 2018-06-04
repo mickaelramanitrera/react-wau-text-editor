@@ -74,7 +74,7 @@ export default class RichEditor extends React.Component {
     }
 
     _convertUrlsToHtmlLinks(text) {
-        const regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n]+)/g;
+        const regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n(\%20)]+)/g;
         return _replaceTxtNotInA(text, regx);
     }
 
