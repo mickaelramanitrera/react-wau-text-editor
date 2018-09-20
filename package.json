@@ -17,7 +17,8 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-select": "1.0.0-rc.1",
-    "tlds": "^1.192.0"
+    "tlds": "^1.192.0",
+    "immutable-helper": "0.0.5"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

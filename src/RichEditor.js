@@ -29,6 +29,7 @@ import {
     getBlockStyle,
     _getCharacterAtEndOfSelection
 } from './utils';
+import update from 'immutable-helper';
 
 
 export default class RichEditor extends React.Component {
@@ -51,6 +52,14 @@ export default class RichEditor extends React.Component {
         this.onTab             = (e) => this._onTab(e);
         this.toggleBlockType   = (type) => this._toggleBlockType(type);
         this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+    }
+
+    componentWillReceiveProps(newProps) {
+        const importfromhtml = stateFromHTML(createNonEmptyParagraph(newProps.content));
+        let content = EditorState.createWithContent(importfromhtml, new CompositeDecorator(decorator));
+        this.setState(update(this.state, { $merge: {
+            content: content
+        }}));
     }
 
 

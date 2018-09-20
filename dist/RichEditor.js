@@ -30,6 +30,10 @@ var _StandardControls = require('./Controls/StandardControls');
 
 var _utils = require('./utils');
 
+var _immutableHelper = require('immutable-helper');
+
+var _immutableHelper2 = _interopRequireDefault(_immutableHelper);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -78,6 +82,15 @@ var RichEditor = function (_React$Component) {
     }
 
     _createClass(RichEditor, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(newProps) {
+            var importfromhtml = (0, _draftJsImportHtml.stateFromHTML)((0, _utils.createNonEmptyParagraph)(newProps.content));
+            var content = _draftJs.EditorState.createWithContent(importfromhtml, new _draftJs.CompositeDecorator(_Decorators2.default));
+            this.setState((0, _immutableHelper2.default)(this.state, { $merge: {
+                    content: content
+                } }));
+        }
+    }, {
         key: '_handleChange',
         value: function _handleChange(editorState) {
             //verify block styling here
@@ -97,7 +110,7 @@ var RichEditor = function (_React$Component) {
     }, {
         key: '_convertUrlsToHtmlLinks',
         value: function _convertUrlsToHtmlLinks(text) {
-            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^!#$%¥&.\(\)\*\+\/\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
+            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
             return (0, _utils._replaceTxtNotInA)(text, regx);
         }
     }, {
