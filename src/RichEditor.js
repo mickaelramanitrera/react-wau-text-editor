@@ -29,7 +29,7 @@ import {
     getBlockStyle,
     _getCharacterAtEndOfSelection
 } from './utils';
-import update from 'immutable-helper';
+import update from 'immutability-helper';
 
 
 export default class RichEditor extends React.Component {

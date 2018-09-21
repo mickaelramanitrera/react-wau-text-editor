@@ -30,9 +30,9 @@ var _StandardControls = require('./Controls/StandardControls');
 
 var _utils = require('./utils');
 
-var _immutableHelper = require('immutable-helper');
+var _immutabilityHelper = require('immutability-helper');
 
-var _immutableHelper2 = _interopRequireDefault(_immutableHelper);
+var _immutabilityHelper2 = _interopRequireDefault(_immutabilityHelper);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -86,7 +86,7 @@ var RichEditor = function (_React$Component) {
         value: function componentWillReceiveProps(newProps) {
             var importfromhtml = (0, _draftJsImportHtml.stateFromHTML)((0, _utils.createNonEmptyParagraph)(newProps.content));
             var content = _draftJs.EditorState.createWithContent(importfromhtml, new _draftJs.CompositeDecorator(_Decorators2.default));
-            this.setState((0, _immutableHelper2.default)(this.state, { $merge: {
+            this.setState((0, _immutabilityHelper2.default)(this.state, { $merge: {
                     content: content
                 } }));
         }

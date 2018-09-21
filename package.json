@@ -12,13 +12,13 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "draft-js": "^0.10.1",
     "draft-js-import-html": "^0.3.2",
+    "immutability-helper": "^2.8.1",
     "linkify-it": "^2.0.3",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-select": "1.0.0-rc.1",
-    "tlds": "^1.192.0",
-    "immutable-helper": "0.0.5"
+    "tlds": "^1.192.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
