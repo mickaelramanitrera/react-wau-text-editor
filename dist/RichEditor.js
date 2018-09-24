@@ -97,7 +97,8 @@ var RichEditor = function (_React$Component) {
     }, {
         key: '_convertUrlsToHtmlLinks',
         value: function _convertUrlsToHtmlLinks(text) {
-            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^!#$%¥&.\(\)\*\+\/\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
+            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
+            //const regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
             return (0, _utils._replaceTxtNotInA)(text, regx);
         }
     }, {
