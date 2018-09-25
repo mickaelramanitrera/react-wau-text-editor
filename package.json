@@ -12,7 +12,7 @@
   "dependencies": {
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "draft-js": "^0.10.5",
-    "draft-js-import-html": "^0.3.2",
+    "draft-js-import-html": "^1.2.1",
     "linkify-it": "^2.0.3",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
