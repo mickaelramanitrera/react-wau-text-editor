@@ -97,7 +97,7 @@ var RichEditor = function (_React$Component) {
     }, {
         key: '_convertUrlsToHtmlLinks',
         value: function _convertUrlsToHtmlLinks(text) {
-            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^!#$%¥&.\(\)\*\+\/\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
+            var regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
             return (0, _utils._replaceTxtNotInA)(text, regx);
         }
     }, {
@@ -284,44 +284,10 @@ var RichEditor = function (_React$Component) {
                 _react2.default.createElement(
                     'div',
                     { className: 'RichEditor-toolbar' },
-                    _react2.default.createElement(_StandardControls.BlockStyleControls, {
-                        editorState: editorState,
-                        onToggle: this.toggleBlockType,
-                        h_styleChanged: this.h_styleChanged.bind(this),
-                        h_styleValue: this.state.h_styleValue
-                    }),
                     _react2.default.createElement(_StandardControls.InlineStyleControls, {
                         editorState: editorState,
                         onToggle: this.toggleInlineStyle
-                    }),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'RichEditor-controls' },
-                        _react2.default.createElement(
-                            'a',
-                            { className: 'RichEditor-styleButton', onClick: this.promptForLink.bind(this) },
-                            _react2.default.createElement(
-                                'i',
-                                { className: 'material-icons' },
-                                'insert_link'
-                            )
-                        ),
-                        _react2.default.createElement(
-                            'a',
-                            { className: 'RichEditor-styleButton', onClick: this.removeLink.bind(this) },
-                            _react2.default.createElement(
-                                'i',
-                                { className: 'material-icons', style: specialStyleForRemoveLink },
-                                'remove_circle'
-                            ),
-                            _react2.default.createElement(
-                                'i',
-                                { className: 'material-icons' },
-                                'insert_link'
-                            )
-                        )
-                    ),
-                    input
+                    })
                 ),
                 _react2.default.createElement(
                     'div',

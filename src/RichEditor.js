@@ -281,26 +281,10 @@ export default class RichEditor extends React.Component {
         return (
             <div className="RichEditor-root">
                 <div className="RichEditor-toolbar">
-                    <BlockStyleControls
-                        editorState={editorState}
-                        onToggle={this.toggleBlockType}
-                        h_styleChanged={this.h_styleChanged.bind(this)}
-                        h_styleValue={this.state.h_styleValue}
-                    />
                     <InlineStyleControls
                         editorState={editorState}
                         onToggle={this.toggleInlineStyle}
                     />
-                    <div className="RichEditor-controls">
-                        <a className="RichEditor-styleButton" onClick={this.promptForLink.bind(this)}>
-                            <i className="material-icons">insert_link</i>
-                        </a>
-                        <a className="RichEditor-styleButton" onClick={this.removeLink.bind(this)}>
-                            <i className="material-icons" style={specialStyleForRemoveLink}>remove_circle</i>
-                            <i className="material-icons">insert_link</i>
-                        </a>
-                    </div>
-                    {input}
                 </div>
                 <div className={className} onClick={this.focus}>
                     <Editor
