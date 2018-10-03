@@ -28,20 +28,19 @@ export const _replaceTxtNotInA = (html, regexp) => {
 
 export const _linkify_text = (text) => {
 
-    // http://, https://, ftp://
-    var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+  // http://, https://, ftp://
+  var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
-    // www. sans http:// or https://
-    var pseudoUrlPattern = /(^|[^\/])((www.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/gim;
-    // var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+  // www. sans http:// or https://
+  //var pseudoUrlPattern = /\s((www\.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/g;
+  var pseudoUrlPattern = /\s((www\.)?([\w]+)\.[a-zA-Z]{2,6})/gim;
 
-    // Email addresses
-    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+  // Email addresses
+  var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
 
-    return text
-    .replace(urlPattern, '<a href="$&">$&</a>')
-     .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
-     .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+  return text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
+              .replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>')
+              .replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 };
 
 export const _getEntityAtCaret = (editorState, key = false) => {
