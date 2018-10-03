@@ -38,9 +38,9 @@ export const _linkify_text = (text) => {
   // Email addresses
   var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})/gim;
 
-  return text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
-              .replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>')
-              .replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+  html = text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
+  html = html.replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>');
+  return html = html.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 };
 
 export const _getEntityAtCaret = (editorState, key = false) => {
