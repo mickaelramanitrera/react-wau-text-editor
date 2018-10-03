@@ -33,10 +33,10 @@ export const _linkify_text = (text) => {
 
   // www. sans http:// or https://
   //var pseudoUrlPattern = /\s((www\.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/g;
-  var pseudoUrlPattern = /\s((www\.)?([\w]+)\.[a-zA-Z]{2,6})/gim;
+  var pseudoUrlPattern = /\s((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,6})/gim;
 
   // Email addresses
-  var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+  var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+/gim;
 
   return text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>')
               .replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>')
