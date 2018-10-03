@@ -26,6 +26,24 @@ export const _replaceTxtNotInA = (html, regexp) => {
   return html.substring(1, html.length - 1);
 };
 
+export const _linkify_text = function(text) {
+
+    // http://, https://, ftp://
+    var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+    // www. sans http:// or https://
+    var pseudoUrlPattern = /(^|[^\/])((www.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/gim;
+    // var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
+    // Email addresses
+    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+
+    return text
+    .replace(urlPattern, '<a href="$&">$&</a>')
+     .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
+     .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+};
+
 export const _getEntityAtCaret = (editorState, key = false) => {
     const selection           = editorState.getSelection();
     const anchorkey           = selection.getAnchorKey();

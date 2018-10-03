@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.createNonEmptyParagraph = exports.getBlockStyle = exports._getEntityRange = exports._getCharacterAtEndOfSelection = exports._getEntityAtCaret = exports._replaceTxtNotInA = undefined;
+exports.createNonEmptyParagraph = exports.getBlockStyle = exports._getEntityRange = exports._getCharacterAtEndOfSelection = exports._getEntityAtCaret = exports._linkify_text = exports._replaceTxtNotInA = undefined;
 
 var _draftJs = require('draft-js');
 
@@ -30,6 +30,21 @@ var _replaceTxtNotInA = exports._replaceTxtNotInA = function _replaceTxtNotInA(h
     });
     //remove the head > and tail <
     return html.substring(1, html.length - 1);
+};
+
+var _linkify_text = exports._linkify_text = function _linkify_text(text) {
+
+    // http://, https://, ftp://
+    var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+
+    // www. sans http:// or https://
+    var pseudoUrlPattern = /(^|[^\/])((www.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/gim;
+    // var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+
+    // Email addresses
+    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+
+    return text.replace(urlPattern, '<a href="$&">$&</a>').replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>').replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
 };
 
 var _getEntityAtCaret = exports._getEntityAtCaret = function _getEntityAtCaret(editorState) {

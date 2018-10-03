@@ -27,7 +27,8 @@ import {
     _getEntityRange,
     _getEntityAtCaret,
     getBlockStyle,
-    _getCharacterAtEndOfSelection
+    _getCharacterAtEndOfSelection,
+  _linkify_text
 } from './utils';
 
 
