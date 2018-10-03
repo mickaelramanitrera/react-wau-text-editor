@@ -67,7 +67,7 @@ export default class RichEditor extends React.Component {
             if (editorState.getCurrentContent().hasText()) {
                 //replace the remaining links to anchors
                 const textInHtml = createNonEmptyParagraph(stateToHTML(convertToRaw(editorState.getCurrentContent())));
-                this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
+                this.props.onChange(_linkify_text(textInHtml));
             } else {
                 this.props.onChange("");
             }

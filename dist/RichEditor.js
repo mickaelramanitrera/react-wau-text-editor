@@ -88,7 +88,7 @@ var RichEditor = function (_React$Component) {
                 if (editorState.getCurrentContent().hasText()) {
                     //replace the remaining links to anchors
                     var textInHtml = (0, _utils.createNonEmptyParagraph)((0, _draftjsToHtml2.default)((0, _draftJs.convertToRaw)(editorState.getCurrentContent())));
-                    this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
+                    this.props.onChange((0, _utils._linkify_text)(textInHtml));
                 } else {
                     this.props.onChange("");
                 }

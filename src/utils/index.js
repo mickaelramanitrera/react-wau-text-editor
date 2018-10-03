@@ -26,7 +26,7 @@ export const _replaceTxtNotInA = (html, regexp) => {
   return html.substring(1, html.length - 1);
 };
 
-export const _linkify_text = function(text) {
+export const _linkify_text = (text) => {
 
     // http://, https://, ftp://
     var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
