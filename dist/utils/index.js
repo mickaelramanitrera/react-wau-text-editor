@@ -42,7 +42,7 @@ var _linkify_text = exports._linkify_text = function _linkify_text(text) {
     var pseudoUrlPattern = /\s((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
 
     // Email addresses
-    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+/gim;
+    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})/gim;
 
     return text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>').replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>').replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 };
