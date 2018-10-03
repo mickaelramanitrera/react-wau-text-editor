@@ -44,9 +44,9 @@ var _linkify_text = exports._linkify_text = function _linkify_text(text) {
     // Email addresses
     var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})/gim;
 
-    html = text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
-    html = html.replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>');
-    return html = html.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+    text = text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
+    text = text.replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>');
+    return text.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
 };
 
 var _getEntityAtCaret = exports._getEntityAtCaret = function _getEntityAtCaret(editorState) {
