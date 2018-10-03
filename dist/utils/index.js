@@ -39,7 +39,7 @@ var _linkify_text = exports._linkify_text = function _linkify_text(text) {
 
     // www. sans http:// or https://
     //var pseudoUrlPattern = /\s((www\.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/g;
-    var pseudoUrlPattern = /\s((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,6})/gim;
+    var pseudoUrlPattern = /\s((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
 
     // Email addresses
     var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+/gim;
