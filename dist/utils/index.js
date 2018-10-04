@@ -32,21 +32,30 @@ var _replaceTxtNotInA = exports._replaceTxtNotInA = function _replaceTxtNotInA(h
     return html.substring(1, html.length - 1);
 };
 
-var _linkify_text = exports._linkify_text = function _linkify_text(text) {
+var _linkify_text = exports._linkify_text = function _linkify_text(html) {
 
-    // http://, https://, ftp://
-    var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+    //just to make the txt parse easily, without (start) or (ends) issue
+    html = '>' + html + '<';
 
-    // www. sans http:// or https://
-    //var pseudoUrlPattern = /\s((www\.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\nA-F0-9{2}]+)/g;
-    var pseudoUrlPattern = /\s((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
+    //parse txt between > and < but not follow with</a
+    html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
 
-    // Email addresses
-    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})/gim;
+        // http://, https://, ftp://
+        var urlPattern = /[^(a\>) | ^"](?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
-    text = text.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
-    text = text.replace(pseudoUrlPattern, '<a href="http://$1" target="_blank">$1</a>');
-    return text.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+        // www. sans http:// or https://
+        var pseudoUrlPattern = /[^(a\>) | ^" | ^(\/\/)]((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
+
+        // Email addresses
+        var emailAddressPattern = /[^(a\>) | ^"]([\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+)/gim;
+
+        txt = txt.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
+        txt = txt.replace(pseudoUrlPattern, '<a href="http://$&" target="_blank">$&</a>');
+        txt = txt.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+        return '>' + txt + '<';
+    });
+    //remove the head > and tail <
+    return html.substring(1, html.length - 1);
 };
 
 var _getEntityAtCaret = exports._getEntityAtCaret = function _getEntityAtCaret(editorState) {
