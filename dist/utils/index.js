@@ -51,7 +51,7 @@ var _linkify_text = exports._linkify_text = function _linkify_text(html) {
 
         txt = txt.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
         txt = txt.replace(pseudoUrlPattern, '<a href="http://$&" target="_blank">$&</a>');
-        txt = txt.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+        // txt = txt.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
         return '>' + txt + '<';
     });
     //remove the head > and tail <
