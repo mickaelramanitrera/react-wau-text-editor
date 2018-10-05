@@ -44,7 +44,7 @@ var _linkify_text = exports._linkify_text = function _linkify_text(html) {
         var urlPattern = /[^(a\>) | ^"](?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
 
         // www. sans http:// or https://
-        var pseudoUrlPattern = /[^(a\>) | ^" | ^(\/\/)]((www\.)?(([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
+        var pseudoUrlPattern = /[^(a\>) | ^" | ^(\/\/) ]((www\.)?([^@]([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
 
         // Email addresses
         var emailAddressPattern = /[^(a\>) | ^"]([\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+)/gim;
