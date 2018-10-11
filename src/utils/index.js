@@ -35,16 +35,19 @@ export const _linkify_text = (html) => {
   html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
 
     // http://, https://, ftp://
-    var urlPattern = /[^(a\>) | ^"](?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+    var urlPattern = /[^(a\>) | ^"]?(https?:\/\/)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/g;
 
     // www. sans http:// or https://
-    var pseudoUrlPattern = /[^(a\>) | ^" | ^(\/\/) ]((www\.)?([^@]([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/gim;
+    var pseudoUrlPattern = /[^(https?:\/\/) | ^(\s)]?(((www\.)?([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/g;
 
     // Email addresses
     var emailAddressPattern = /[^(a\>) | ^"]([\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+)/gim;
 
-    txt = txt.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
-    txt = txt.replace(pseudoUrlPattern, '<a href="http://$&" target="_blank">$&</a>');
+    if (urlPattern.test(txt)){
+      txt = txt.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
+    } else {
+      txt = txt.replace(pseudoUrlPattern, '<a href="http://$&" target="_blank">$&</a>');
+    }
     // txt = txt.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
     return '>' + txt + '<';
   });
