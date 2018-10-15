@@ -58,8 +58,7 @@ const H_STYLES    = [
 const INLINE_STYLES       = [
     {label: 'format_bold', style: 'BOLD'},
     {label: 'format_italic', style: 'ITALIC'},
-    {label: 'format_underline', style: 'UNDERLINE'},
-    {label: 'text_format', style: 'CODE'},
+    {label: 'format_underline', style: 'UNDERLINE'}
 ];
 
 
