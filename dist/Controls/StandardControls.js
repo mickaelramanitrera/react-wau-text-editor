@@ -82,7 +82,7 @@ var StyleButton = exports.StyleButton = function (_React$Component) {
 
 var BLOCK_TYPES = [{ label: 'format_quote', style: 'blockquote' }, { label: 'format_list_bulleted', style: 'unordered-list-item' }, { label: 'format_list_numbered', style: 'ordered-list-item' }, { label: 'code', style: 'code-block' }];
 var H_STYLES = [{ label: "Normal", value: 'unstyled' }, { label: 'H1', value: 'header-one' }, { label: 'H2', value: 'header-two' }, { label: 'H3', value: 'header-three' }, { label: 'H4', value: 'header-four' }, { label: 'H5', value: 'header-five' }, { label: 'H6', value: 'header-six' }];
-var INLINE_STYLES = [{ label: 'format_bold', style: 'BOLD' }, { label: 'format_italic', style: 'ITALIC' }, { label: 'format_underline', style: 'UNDERLINE' }, { label: 'text_format', style: 'CODE' }];
+var INLINE_STYLES = [{ label: 'format_bold', style: 'BOLD' }, { label: 'format_italic', style: 'ITALIC' }, { label: 'format_underline', style: 'UNDERLINE' }];
 
 /**
  * Block buttons rendering
