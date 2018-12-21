@@ -27,7 +27,8 @@ import {
     _getEntityRange,
     _getEntityAtCaret,
     getBlockStyle,
-    _getCharacterAtEndOfSelection
+    _getCharacterAtEndOfSelection,
+  _linkify_text
 } from './utils';
 
 
@@ -66,7 +67,7 @@ export default class RichEditor extends React.Component {
             if (editorState.getCurrentContent().hasText()) {
                 //replace the remaining links to anchors
                 const textInHtml = createNonEmptyParagraph(stateToHTML(convertToRaw(editorState.getCurrentContent())));
-                this.props.onChange(this._convertUrlsToHtmlLinks(textInHtml));
+                this.props.onChange(_linkify_text(textInHtml));
             } else {
                 this.props.onChange("");
             }
@@ -74,7 +75,8 @@ export default class RichEditor extends React.Component {
     }
 
     _convertUrlsToHtmlLinks(text) {
-        const regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
+        const regx = /((https?:\/\/)?(www.)?[\w]+\.[^\!\#\$\%\¥\&\.\(\)\*\+\/\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
+        //const regx = /((https?:\/\/)?(www.)?[\w]+\.[^\s\<\>\"\'\r\n\%A-F0-9{2}]+)/g;
         return _replaceTxtNotInA(text, regx);
     }
 

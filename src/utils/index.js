@@ -26,6 +26,35 @@ export const _replaceTxtNotInA = (html, regexp) => {
   return html.substring(1, html.length - 1);
 };
 
+export const _linkify_text = (html) => {
+
+  //just to make the txt parse easily, without (start) or (ends) issue
+  html = '>' + html + '<';
+
+  //parse txt between > and < but not follow with</a
+  html = html.replace(/>([^<>]+)(?!<\/a)</g, function (match, txt) {
+
+    // http://, https://, ftp://
+    var urlPattern = /[^(a\>) | ^"]?(https?:\/\/)[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/g;
+
+    // www. sans http:// or https://
+    var pseudoUrlPattern = /[^(https?:\/\/) | ^(\s)]?(((www\.)?([\w]+)\.)?([\w]+)\.[a-zA-Z]{2,15})/g;
+
+    // Email addresses
+    var emailAddressPattern = /[^(a\>) | ^"]([\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,15})+)/gim;
+
+    if (urlPattern.test(txt)){
+      txt = txt.replace(urlPattern, '<a href="$&" target="_blank">$&</a>');
+    } else {
+      txt = txt.replace(pseudoUrlPattern, '<a href="http://$&" target="_blank">$&</a>');
+    }
+    // txt = txt.replace(emailAddressPattern, '<a href="mailto:$&" target="_blank">$&</a>');
+    return '>' + txt + '<';
+  });
+  //remove the head > and tail <
+  return html.substring(1, html.length - 1);
+};
+
 export const _getEntityAtCaret = (editorState, key = false) => {
     const selection           = editorState.getSelection();
     const anchorkey           = selection.getAnchorKey();
