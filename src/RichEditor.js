@@ -10,10 +10,11 @@ import {
     convertFromHTML,
     convertToRaw,
     ContentState,
-    Modifier
+    Modifier,
+    getDefaultKeyBinding
 } from 'draft-js';
 import stateToHTML from './Converter/draftjs-to-html';
-import {stateFromHTML} from 'draft-js-import-html';
+import { stateFromHTML } from 'draft-js-import-html';
 import decorator from './Decorators';
 import LinkDialog from './DialogBoxes/Link';
 import {
@@ -28,7 +29,7 @@ import {
     _getEntityAtCaret,
     getBlockStyle,
     _getCharacterAtEndOfSelection,
-  _linkify_text
+    _linkify_text
 } from './utils';
 
 
@@ -40,17 +41,17 @@ export default class RichEditor extends React.Component {
         var content = null;
         if (this.props.content === null || this.props.content !== "") {
             const importfromhtml = stateFromHTML(createNonEmptyParagraph(this.props.content));
-            content              = EditorState.createWithContent(importfromhtml, new CompositeDecorator(decorator));
+            content = EditorState.createWithContent(importfromhtml, new CompositeDecorator(decorator));
         } else {
             content = EditorState.createEmpty(new CompositeDecorator(decorator));
         }
 
-        this.state             = {editorState: content, urlInputValue: "", showInput: false, h_styleValue: 'unstyled'};
-        this.focus             = () => this.refs.editor.focus();
-        this.onChange          = (editorState) => this._handleChange(editorState);
-        this.handleKeyCommand  = (command) => this._handleKeyCommand(command);
-        this.onTab             = (e) => this._onTab(e);
-        this.toggleBlockType   = (type) => this._toggleBlockType(type);
+        this.state = { editorState: content, urlInputValue: "", showInput: false, h_styleValue: 'unstyled' };
+        this.focus = () => this.refs.editor.focus();
+        this.onChange = (editorState) => this._handleChange(editorState);
+        this.handleKeyCommand = (command) => this._handleKeyCommand(command);
+        this.onTab = (e) => this._onTab(e);
+        this.toggleBlockType = (type) => this._toggleBlockType(type);
         this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
     }
 
@@ -62,7 +63,7 @@ export default class RichEditor extends React.Component {
             .getCurrentContent()
             .getBlockForKey(Selection.getAnchorKey())
             .getType();
-        this.setState({editorState: editorState, h_styleValue: BlockType});
+        this.setState({ editorState: editorState, h_styleValue: BlockType });
         if (typeof this.props.onChange === 'function') {
             if (editorState.getCurrentContent().hasText()) {
                 //replace the remaining links to anchors
@@ -81,8 +82,8 @@ export default class RichEditor extends React.Component {
     }
 
     _handleKeyCommand(command) {
-        const {editorState} = this.state;
-        const newState      = RichUtils.handleKeyCommand(editorState, command);
+        const { editorState } = this.state;
+        const newState = RichUtils.handleKeyCommand(editorState, command);
         if (newState) {
             this.onChange(newState);
             return true;
@@ -115,16 +116,16 @@ export default class RichEditor extends React.Component {
 
     focusEditor() {
         document.body.style.overflow = "auto";
-        const self                   = this;
+        const self = this;
         setTimeout(function () {
             self.focus();
         }, 300);
     }
 
     promptForLink() {
-        const contentState  = this.state.editorState.getCurrentContent();
-        const selection     = this.state.editorState.getSelection();
-        var linkValue       = "";
+        const contentState = this.state.editorState.getCurrentContent();
+        const selection = this.state.editorState.getSelection();
+        var linkValue = "";
         //check if there is an entity link now
         const entityAtCaret = _getEntityAtCaret(this.state.editorState);
         if (entityAtCaret !== null && entityAtCaret.type === "LINK") {
@@ -136,7 +137,7 @@ export default class RichEditor extends React.Component {
         }
         //set body style
         document.body.style.overflow = "hidden";
-        this.setState({urlInputValue: linkValue, showInput: true});
+        this.setState({ urlInputValue: linkValue, showInput: true });
     }
 
     confirmLink(urlValue) {
@@ -147,17 +148,17 @@ export default class RichEditor extends React.Component {
         }
 
         const contentState = this.state.editorState.getCurrentContent();
-        const selection    = this.state.editorState.getSelection();
+        const selection = this.state.editorState.getSelection();
 
         //check if it is already a link there
-        const entityAtCaret        = _getEntityAtCaret(this.state.editorState);
+        const entityAtCaret = _getEntityAtCaret(this.state.editorState);
         var contentStateWithEntity = null;
         if (entityAtCaret !== null && entityAtCaret.getType() === "LINK") {
             //update the old link
             const entityKeyAtCaret = _getEntityAtCaret(this.state.editorState, true);
-            contentStateWithEntity = contentState.replaceEntityData(entityKeyAtCaret, {url: urlValue});
+            contentStateWithEntity = contentState.replaceEntityData(entityKeyAtCaret, { url: urlValue });
 
-            this.setState({urlInputValue: "", showInput: false});
+            this.setState({ urlInputValue: "", showInput: false });
             this.focusEditor();
             return true;
         }
@@ -171,9 +172,9 @@ export default class RichEditor extends React.Component {
         contentStateWithEntity = contentState.createEntity(
             'LINK',
             'MUTABLE',
-            {url: (urlValue.includes('http:') === true) ? urlValue : 'http:\/\/' + urlValue, target:'_blank'}
+            { url: (urlValue.includes('http:') === true) ? urlValue : 'http:\/\/' + urlValue, target: '_blank' }
         );
-        const entityKey        = contentStateWithEntity.getLastCreatedEntityKey();
+        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
         //affect the link entity to the selection
         var withLink = Modifier.applyEntity(
             this.state.editorState.getCurrentContent(),
@@ -212,26 +213,26 @@ export default class RichEditor extends React.Component {
         }
 
         this.setState({
-            editorState  : editorStateWithEntity,
+            editorState: editorStateWithEntity,
             urlInputValue: "",
-            showInput    : false
+            showInput: false
         });
         this.focusEditor();
     }
 
 
     removeLink() {
-        const EditorState   = this.state.editorState;
+        const EditorState = this.state.editorState;
         const entityAtCaret = _getEntityAtCaret(this.state.editorState);
-        const contentState  = EditorState.getCurrentContent();
-        const contentBlock  = contentState.getBlockForKey(EditorState.getSelection().getAnchorKey());
+        const contentState = EditorState.getCurrentContent();
+        const contentBlock = contentState.getBlockForKey(EditorState.getSelection().getAnchorKey());
         if (entityAtCaret !== null && entityAtCaret.type === "LINK") {
             //get the selection of the entity
             const entitySelection = _getEntityRange(entityAtCaret, contentBlock, contentState);
             this.setState({
-                editorState  : RichUtils.toggleLink(EditorState, entitySelection, null),
+                editorState: RichUtils.toggleLink(EditorState, entitySelection, null),
                 urlInputValue: "",
-                showInput    : false
+                showInput: false
             });
         }
         this.focusEditor();
@@ -239,7 +240,7 @@ export default class RichEditor extends React.Component {
 
 
     cancelUrlInput() {
-        var newState       = Object.assign({}, this.state);
+        var newState = Object.assign({}, this.state);
         newState.showInput = false;
         this.setState(newState);
         this.focusEditor();
@@ -247,7 +248,7 @@ export default class RichEditor extends React.Component {
 
     h_styleChanged(val) {
         this.setState({
-            editorState : RichUtils.toggleBlockType(
+            editorState: RichUtils.toggleBlockType(
                 this.state.editorState,
                 val.value
             ),
@@ -256,13 +257,26 @@ export default class RichEditor extends React.Component {
         this.focusEditor();
     }
 
+    handleKeyBinding(e) {
+        const { saveOnEnter } = this.props;
+        if (e.keyCode === 13 /* `Enter` key */) {
+            if (saveOnEnter && e.nativeEvent.shiftKey) {
+                return getDefaultKeyBinding(e);
+            } else {
+                this.props.saveFn();
+            }
+        } else {
+            return getDefaultKeyBinding(e);
+        }
+    }
+
 
     render() {
 
-        const {editorState} = this.state;
+        const { editorState } = this.state;
         // If the user changes block type before entering any text, we can
         // either style the placeholder or hide it. Let's just hide it now.
-        let className    = 'RichEditor-editor';
+        let className = 'RichEditor-editor';
         var contentState = editorState.getCurrentContent();
         if (!contentState.hasText()) {
             if (contentState.getBlockMap().first().getType() !== 'unstyled') {
@@ -270,14 +284,14 @@ export default class RichEditor extends React.Component {
             }
         }
 
-        let input                       = (this.state.showInput) ? <LinkDialog
+        let input = (this.state.showInput) ? <LinkDialog
             value={this.state.urlInputValue}
             onSubmit={(urlValue) => this.confirmLink(urlValue)}
             onDismiss={this.cancelUrlInput.bind(this)}
         /> : null;
         const specialStyleForRemoveLink = {
             position: "absolute",
-            top     : "1px",
+            top: "1px",
             fontSize: "14px"
         };
         return (
@@ -310,6 +324,7 @@ export default class RichEditor extends React.Component {
                         customStyleMap={styleMap}
                         editorState={editorState}
                         handleKeyCommand={this.handleKeyCommand}
+                        keyBindingFn={this.handleKeyBinding.bind(this)}
                         onChange={this.onChange}
                         onTab={this.onTab}
                         ref="editor"

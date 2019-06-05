@@ -251,6 +251,21 @@ var RichEditor = function (_React$Component) {
             this.focusEditor();
         }
     }, {
+        key: 'handleKeyBinding',
+        value: function handleKeyBinding(e) {
+            var saveOnEnter = this.props.saveOnEnter;
+
+            if (e.keyCode === 13 /* `Enter` key */) {
+                    if (saveOnEnter && e.nativeEvent.shiftKey) {
+                        return (0, _draftJs.getDefaultKeyBinding)(e);
+                    } else {
+                        this.props.saveFn();
+                    }
+                } else {
+                return (0, _draftJs.getDefaultKeyBinding)(e);
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -332,6 +347,7 @@ var RichEditor = function (_React$Component) {
                         customStyleMap: _StandardControls.styleMap,
                         editorState: editorState,
                         handleKeyCommand: this.handleKeyCommand,
+                        keyBindingFn: this.handleKeyBinding.bind(this),
                         onChange: this.onChange,
                         onTab: this.onTab,
                         ref: 'editor',
