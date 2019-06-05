@@ -260,10 +260,10 @@ export default class RichEditor extends React.Component {
     handleKeyBinding(e) {
         const { saveOnEnter } = this.props;
         if (e.keyCode === 13 /* `Enter` key */) {
-            if (saveOnEnter && e.nativeEvent.shiftKey) {
-                return getDefaultKeyBinding(e);
-            } else {
+            if (saveOnEnter && !e.nativeEvent.shiftKey) {                
                 this.props.saveFn();
+            } else {
+                return getDefaultKeyBinding(e);
             }
         } else {
             return getDefaultKeyBinding(e);
