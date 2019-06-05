@@ -256,10 +256,10 @@ var RichEditor = function (_React$Component) {
             var saveOnEnter = this.props.saveOnEnter;
 
             if (e.keyCode === 13 /* `Enter` key */) {
-                    if (saveOnEnter && e.nativeEvent.shiftKey) {
-                        return (0, _draftJs.getDefaultKeyBinding)(e);
-                    } else {
+                    if (saveOnEnter && !e.nativeEvent.shiftKey) {
                         this.props.saveFn();
+                    } else {
+                        return (0, _draftJs.getDefaultKeyBinding)(e);
                     }
                 } else {
                 return (0, _draftJs.getDefaultKeyBinding)(e);
